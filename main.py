@@ -29,6 +29,46 @@ def get_rse(input_img, output_img):
     #at last, returns the squared root of the summation
     return math.sqrt(rse)
 
+def scale_image(img):
+    min_val = img.min()
+    max_val = img.max()
+
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            img[i][j] = (img[i][j] - min_val)*255/max_val
+
+def unsharp_mask(input_img, c, kernel_op):
+    
+    #defining which kernel to use
+    kernel =  np.matrix([[0, -1, 0], [-1, 4, -1], [0, -1, 0]])
+    if kernel_op == 2:
+        kernel = np.matrix([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
+    
+    N, M = input_img.shape  #image dimensions 
+    n, m = kernel.shape     #kernel dimensions
+    a = int((n-1)/2)
+    b = int((m-1)/2)
+    
+    #initializing output img
+    output_img = np.zeros(input_img.shape, dtype=np.float32)
+    
+    #will compute for each pixel reachable
+    for i in range(a, N-a):
+        for j in range(b, M-b):
+            #selecting centered region
+            neighborhood = input_img[i-a : i+a+1, j-b : j+b+1]
+            #applying filter
+            output_img[i, j] = np.sum( np.multiply(neighborhood, kernel))
+    
+    #performing first scaling operation
+    scale_image(output_img)
+    #performing addition
+    output_img = output_img * c + input_img
+    #performing second scaling operation
+    scale_image(output_img)
+    
+    return output_img
+
 
 def get_gaussian_val(x, sigma):
     """
@@ -102,7 +142,8 @@ if __name__ == "__main__":
     if method == 2:
         
         c = float(input())
-        kernel = int(input())
+        kernel_op = int(input())
+        output_img = unsharp_mask(input_img, c, kernel_op)
 
     if method == 3:
         sig_row = float(input())
