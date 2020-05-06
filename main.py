@@ -1,10 +1,17 @@
 '''
 author: Sergio Ricardo Gomes Barbosa Filho
+
 nusp:   10408386
+
 course: scc0251
+
 year/semester: 2020/1
+
+git repository: github.com/serbarbosa/image-enhancement-and-filtering
+
 Assignment 2: Image enhancement and filtering
 '''
+
 import numpy as np
 #import matplotlib.pyplot as plt
 import imageio
@@ -39,7 +46,7 @@ def scale_image(img):
 
     for i in range(img.shape[0]):
         for j in range(img.shape[1]):
-            img[i][j] = (img[i][j] - min_val)*255/max_val
+            img[i][j] = (img[i][j] - min_val)*255/(max_val-min_val)
 
 def get_gaussian_val(x, sigma):
     """
